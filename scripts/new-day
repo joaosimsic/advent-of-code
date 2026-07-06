@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+    echo "Usage: $0 <year> <day> [language]"
+    echo "  language defaults to 'rust'"
+    exit 1
+}
+
+YEAR=${1:-}
+DAY=${2:-}
+LANG=${3:-rust}
+
+[[ -z "$YEAR" || -z "$DAY" ]] && usage
+
+DAY_PAD=$(printf '%02d' "$DAY")
+CNAME="y${YEAR}d${DAY_PAD}"
+DIR="${YEAR}/${DAY}/${LANG}"
+
+case "$LANG" in
+    rust)
+        mkdir -p "$DIR/src"
+
+        cat > "$DIR/Cargo.toml" <<- CARGO
+		[package]
+		name = "${CNAME}"
+		version = "0.1.0"
+		edition = "2024"
+
+		[dependencies]
+		aoc-common = { path = "../../../aoc-common" }
+		CARGO
+
+        cat > "$DIR/src/main.rs" <<- RUST
+		fn main() {
+		    let input = aoc_common::read_stdin();
+		    println!("{input}");
+		}
+		RUST
+
+        echo "Created $DIR"
+        ;;
+    *)
+        echo "Unknown language: $LANG"
+        exit 1
+        ;;
+esac

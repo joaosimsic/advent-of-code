@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+    echo "Usage: $0 <year> <day> [language]"
+    echo "  language defaults to 'rust'"
+    exit 1
+}
+
+YEAR=${1:-}
+DAY=${2:-}
+LANG=${3:-rust}
+
+[[ -z "$YEAR" || -z "$DAY" ]] && usage
+
+DAY_PAD=$(printf '%02d' "$DAY")
+INPUT_URL="http://localhost:8080/input/${YEAR}/${DAY}"
+
+case "$LANG" in
+    rust)
+        CRATE="y${YEAR}d${DAY_PAD}"
+        curl -sf "$INPUT_URL" | cargo run -p "$CRATE"
+        ;;
+    *)
+        echo "Unknown language: $LANG"
+        exit 1
+        ;;
+esac

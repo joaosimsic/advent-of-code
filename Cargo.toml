@@ -1,0 +1,7 @@
+[workspace]
+resolver = "2"
+members = [
+    "toolbox",
+    "aoc-common",
+    "20*/*/rust",
+]
