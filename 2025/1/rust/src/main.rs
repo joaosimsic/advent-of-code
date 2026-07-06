@@ -1,4 +1,4 @@
 fn main() {
-    let input = aoc_common::read_stdin();
+    let input = rust::read_stdin();
     println!("{input}");
 }

@@ -1,4 +1,4 @@
-import axios from "axios";
+import { fetchInput } from "ts";
 
 type Direction = "L" | "R";
 
@@ -12,14 +12,6 @@ type Pos<N extends number, Acc extends number[] = []> = Acc["length"] extends N
     : Pos<N, [...Acc, Acc["length"]]>;
 
 type DialPos = Pos<100>;
-
-const fetchInput = async (): Promise<string> => {
-    const response = await axios.get<string>(
-        "http://localhost:8080/input/2025/1",
-    );
-
-    return response.data;
-};
 
 const isDirection = (char: string): char is Direction => {
     return char === "L" || char === "R";
@@ -62,7 +54,7 @@ const main = async () => {
 
     let atZeroTimes = 0;
 
-    const input = await fetchInput();
+    const input = await fetchInput(2025, 1);
 
     const inputList: string[] = input.split("\n");
 

@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "workspaces": ["20*/*/ts", "common/ts"],
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}

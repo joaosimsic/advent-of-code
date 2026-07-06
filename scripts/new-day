@@ -28,15 +28,43 @@ case "$LANG" in
 		edition = "2024"
 
 		[dependencies]
-		aoc-common = { path = "../../../aoc-common" }
+		rust = { path = "../../../common/rust" }
 		CARGO
 
         cat > "$DIR/src/main.rs" <<- RUST
 		fn main() {
-		    let input = aoc_common::read_stdin();
+		    let input = rust::read_stdin();
 		    println!("{input}");
 		}
 		RUST
+
+        echo "Created $DIR"
+        ;;
+    ts)
+        mkdir -p "$DIR"
+
+        cat > "$DIR/package.json" <<- JSON
+		{
+		  "name": "${CNAME}",
+		  "private": true,
+		  "dependencies": {
+		    "ts": "*"
+		  }
+		}
+		JSON
+
+        cat > "$DIR/tsconfig.json" <<- JSON
+		{
+		  "extends": "../../../tsconfig.json"
+		}
+		JSON
+
+        cat > "$DIR/index.ts" <<- TS
+		import { readStdin } from "ts";
+
+		const input = await readStdin();
+		console.log(input);
+		TS
 
         echo "Created $DIR"
         ;;

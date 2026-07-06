@@ -21,6 +21,9 @@ case "$LANG" in
         CRATE="y${YEAR}d${DAY_PAD}"
         curl -sf "$INPUT_URL" | cargo run -p "$CRATE"
         ;;
+    ts)
+        curl -sf "$INPUT_URL" | bun run "${YEAR}/${DAY_PAD}/ts/index.ts"
+        ;;
     *)
         echo "Unknown language: $LANG"
         exit 1
