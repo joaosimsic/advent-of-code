@@ -1,0 +1,10 @@
+[package]
+name = "toolbox"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+axum = "0.8.9"
+dotenvy = "0.15.7"
+reqwest = "0.13.4"
+tokio = "1.52.3"
