@@ -27,6 +27,7 @@ const isDirection = (char: string): char is Direction => {
 
 const extractInstructions = (list: string[]): Instruction[] => {
     let instructions: Instruction[] = [];
+
     list.forEach((s) => {
         const cleaned = s.trim();
 
@@ -45,7 +46,7 @@ const extractInstructions = (list: string[]): Instruction[] => {
 };
 
 const safeMod = (n: number, m: number): DialPos => {
-    return (((n % m) * m) % m) as DialPos;
+    return (((n % m) + m) % m) as DialPos;
 };
 
 const doInstruction = (dial: DialPos, i: Instruction): DialPos => {
