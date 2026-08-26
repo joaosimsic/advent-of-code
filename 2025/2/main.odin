@@ -33,13 +33,14 @@ main :: proc() {
 	}
 	defer delete(ids)
 
-	sum := 0
+	part_1, part_2 := 0, 0
 
 	for id in ids {
-		sum += sum_mirrors(id)
+		p1, p2 := sum_mirrors(id)
+		part_1 += p1
+		part_2 += p2
 	}
-
-	fmt.println(sum)
+	fmt.printfln("part 1: %d, part 2: %d", part_1, part_2)
 }
 
 parse_file :: proc(
@@ -90,55 +91,71 @@ parse_id :: proc(s: string) -> (id: ID, ok: bool) {
 	return ID{first, last}, true
 }
 
-sum_mirrors :: proc(id: ID) -> int {
+sum_mirrors :: proc(id: ID) -> (part_1: int, part_2: int) {
 	start_digits := digits(id.first)
 	end_digits := digits(id.last)
 
-	seen := make(map[int]struct{}, context.allocator)
-	defer delete(seen)
+	seen_part_1 := make(map[int]struct{}, context.allocator)
+	seen_part_2 := make(map[int]struct{}, context.allocator)
+	defer delete(seen_part_1)
+	defer delete(seen_part_2)
 
 	for total_digits := start_digits; total_digits <= end_digits; total_digits += 1 {
-		if total_digits % 2 != 0 {
-			continue
-		}
+		for pattern_digits := 1; pattern_digits <= total_digits / 2; pattern_digits += 1 {
+			if total_digits % pattern_digits != 0 {
+				continue
+			}
 
-		pattern_digits := total_digits / 2
+			repetitions := total_digits / pattern_digits
+			base := pow10(pattern_digits)
 
-		base := pow10(pattern_digits)
+			multiplier := 0
+			power := 1
 
-		multiplier := base + 1
+			for i := 0; i < repetitions; i += 1 {
+				multiplier += power
+				power *= base
+			}
 
-		first_pattern := ceil_div(id.first, multiplier)
-		last_pattern := id.last / multiplier
+			first_pattern := ceil_div(id.first, multiplier)
+			last_pattern := id.last / multiplier
 
-		min_pattern := pow10(pattern_digits - 1)
-		max_pattern := pow10(pattern_digits) - 1
+			min_pattern := pow10(pattern_digits - 1)
+			max_pattern := pow10(pattern_digits) - 1
 
-		if first_pattern < min_pattern {
-			first_pattern = min_pattern
-		}
+			if first_pattern < min_pattern {
+				first_pattern = min_pattern
+			}
 
-		if last_pattern > max_pattern {
-			last_pattern = max_pattern
-		}
+			if last_pattern > max_pattern {
+				last_pattern = max_pattern
+			}
 
-		if first_pattern > last_pattern {
-			continue
-		}
+			if first_pattern > last_pattern {
+				continue
+			}
 
-		for pattern := first_pattern; pattern <= last_pattern; pattern += 1 {
-			mirror := pattern * multiplier
-			seen[mirror] = {}
+			for pattern := first_pattern; pattern <= last_pattern; pattern += 1 {
+				invalid := pattern * multiplier
+
+				seen_part_2[invalid] = {}
+
+				if repetitions == 2 {
+					seen_part_1[invalid] = {}
+				}
+			}
 		}
 	}
 
-	sum := 0
-
-	for value in seen {
-		sum += value
+	for value in seen_part_1 {
+		part_1 += value
 	}
 
-	return sum
+	for value in seen_part_2 {
+		part_2 += value
+	}
+
+	return part_1, part_2
 }
 
 ceil_div :: proc(a, b: int) -> int {
