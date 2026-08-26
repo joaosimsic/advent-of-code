@@ -60,14 +60,12 @@ parse_file :: proc(
 
 parse_id :: proc(s: string) -> (id: ID, ok: bool) {
 	parts := strings.split(s, "-")
-
 	if len(parts) != 2 {
 		return {}, false
 	}
 
 	first, first_ok := strconv.parse_int(parts[0])
 	last, last_ok := strconv.parse_int(parts[1])
-
 	if !first_ok || !last_ok {
 		return {}, false
 	}
