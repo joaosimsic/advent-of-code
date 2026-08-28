@@ -1,24 +1,44 @@
-import qualified Data.Vector as V
+import qualified Data.Set as S
 
-type Grid = V.Vector (V.Vector Char)
+type Position = (Int, Int)
+type Grid = S.Set Position
 
 parseGrid :: String -> Grid
 parseGrid s =
-    V.fromList
-        . map V.fromList
-        . filter (not . null)
-        $ lines s
+    S.fromList
+        [ (row, col)
+        | (row, line) <- zip [0 ..] (lines s)
+        , (col, char) <- zip [0 ..] line
+        , char == '@'
+        ]
 
-coordinates :: Grid -> [(Int, Int)]
-coordinates grid =
-    [ (row, col)
-    | row <- [0 .. V.length grid - 1]
-    , col <- [0 .. V.length (grid V.! 0) - 1]
+directions :: [Position]
+directions =
+    [ (dr, dc)
+    | dr <- [-1, 0, 1]
+    , dc <- [-1, 0, 1]
+    , (dr, dc) /= (0, 0)
+    ]
+
+atNeighbors :: Grid -> Position -> Int
+atNeighbors grid (row, col) =
+    length
+        [ ()
+        | (dr, dc) <- directions
+        , S.member (row + dr, col + dc) grid
+        ]
+
+accessible :: Grid -> [Position]
+accessible grid =
+    [ position
+    | position <- S.toList grid
+    , atNeighbors grid position <= 3
     ]
 
 main :: IO ()
 main = do
     content <- readFile "2025/4/input.txt"
     let grid = parseGrid content
-    print $ V.length grid
-    print $ V.length (grid V.! 0)
+        result = accessible grid
+
+    print $ length result
